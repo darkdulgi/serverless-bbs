@@ -10,7 +10,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
         <meta name="icon" content="favicon.svg" />
       </Head>
       <NavBar />
-      <div>
+      <div className="mt-5 mx-auto w-full max-w-5xl">
         {children}
       </div>
     </>
