@@ -1,30 +1,40 @@
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-interface PostType {
+interface SimplePostType {
   id: number;
   writer: string;
   title: string;
   content: string;
+  date: number;
+  numOfComment: number;
 }
 
 export default function Index({ postList }: any) {
   const [formVisible, setFormVisible] = useState(false);
   const { register, handleSubmit, formState: { errors }, } = useForm();
   const router = useRouter();
+
   const onSubmit = (data: any) => {
     console.log(data);
     if (confirm('이대로 글을 작성하시겠습니까?')) {
-      // API
+      axios.post('/api/write', data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       router.reload();
     }
   };
 
   return <>
     <div className="grid gap-5">
-      {postList.map((post: PostType) =>
+      {postList.map((post: SimplePostType) =>
         <Link
           className="border flex rounded-3xl p-5 justify-between"
           key={post.id}
@@ -49,7 +59,7 @@ export default function Index({ postList }: any) {
       )}
     </div>
 
-    <div className="absolute bottom-8 right-8 flex flex-col gap-5 items-end w-full max-w-xl">
+    <div className="absolute bottom-8 right-0 px-8 flex flex-col gap-5 items-end w-full max-w-xl">
       <form className={`${formVisible ? "" : "invisible"} bg-white w-full flex flex-col gap-3 items-end border border-sky-300 rounded-3xl p-5 shadow-lg shadow-sky-200`}>
         <span className="self-start text-xl font-bold text-sky-700">
           글 작성하기
@@ -86,20 +96,25 @@ export default function Index({ postList }: any) {
 }
 
 export async function getStaticProps() {
-  const data: PostType[] = [
-    {
-      id: 1,
-      writer: "darkdulgi",
-      title: "안녕하세요ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ",
-      content: "잘부탁드립니다!ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ",
-    },
-    {
-      id: 2,
-      writer: "daniel",
-      title: "저는",
-      content: "닭둘기라고합니다!",
-    },
-  ];
+  const data: SimplePostType[] = [];
+
+  await axios.get('https://serverless-bbs-db-default-rtdb.asia-southeast1.firebasedatabase.app/post.json')
+    .then((res) => {
+      for (const key in res.data) {
+        const post = res.data[key];
+        data.push({
+          id: +key,
+          writer: post.writer,
+          date: post.date,
+          title: post.title,
+          content: post.content,
+          numOfComment: post.comment.length,
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   return {
     props: {
