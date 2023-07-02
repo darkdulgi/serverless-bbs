@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSession } from "next-auth/react"
+import { getPostList } from "@/pages/api/view";
 
 interface SimplePostType {
   id: number;
@@ -14,6 +16,7 @@ interface SimplePostType {
 }
 
 export default function Index({ postList }: any) {
+  const { data: session } = useSession();
   const [formVisible, setFormVisible] = useState(false);
   const { register, handleSubmit, formState: { errors }, } = useForm();
   const router = useRouter();
@@ -21,7 +24,7 @@ export default function Index({ postList }: any) {
   const onSubmit = (data: any) => {
     console.log(data);
     if (confirm('이대로 글을 작성하시겠습니까?')) {
-      axios.post('/api/write', data)
+      axios.post("/api/write", data)
         .then((res) => {
           console.log(res);
         })
@@ -88,7 +91,10 @@ export default function Index({ postList }: any) {
       <img
         className="h-14 hover:scale-110 duration-300 ease-out cursor-pointer"
         src="https://www.svgrepo.com/show/121490/pencil.svg"
-        onClick={() => setFormVisible(!formVisible)}
+        onClick={() => {
+          if (session) setFormVisible(!formVisible);
+          else alert("글을 작성하려면 먼저 로그인을 해야 합니다.");
+        }}
       />
     </div>
 
@@ -96,26 +102,8 @@ export default function Index({ postList }: any) {
 }
 
 export async function getStaticProps() {
-  const data: SimplePostType[] = [];
-
-  await axios.get('https://serverless-bbs-db-default-rtdb.asia-southeast1.firebasedatabase.app/post.json')
-    .then((res) => {
-      for (const key in res.data) {
-        const post = res.data[key];
-        data.push({
-          id: +key,
-          writer: post.writer,
-          date: post.date,
-          title: post.title,
-          content: post.content,
-          numOfComment: post.comment.length,
-        });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
+  const data = getPostList();
+  
   return {
     props: {
       postList: data,
