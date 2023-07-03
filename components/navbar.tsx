@@ -4,7 +4,6 @@ import Image from "next/image";
 
 export default function NavBar() {
   const { data: session } = useSession();
-
   return (
     <nav className="bg-gradient-to-r from-indigo-600 to-emerald-600 shadow-md shadow-indigo-200 h-20 text-white flex justify-between items-center font-bold">
       <div className="px-5 text-2xl">

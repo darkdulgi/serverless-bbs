@@ -4,16 +4,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react"
-import { getPostList } from "@/pages/api/view";
-
-interface SimplePostType {
-  id: number;
-  writer: string;
-  title: string;
-  content: string;
-  date: number;
-  numOfComment: number;
-}
+import { getPostList } from "@/pages/api/post";
+import { PostType } from "@/interface/dbtype";
 
 export default function Index({ postList }: any) {
   const { data: session } = useSession();
@@ -22,9 +14,14 @@ export default function Index({ postList }: any) {
   const router = useRouter();
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    const newPost = {
+      title: data.title,
+      content: data.content,
+      writer: session?.user?.name,
+      writerImage: session?.user?.image
+    }
     if (confirm('이대로 글을 작성하시겠습니까?')) {
-      axios.post("/api/write", data)
+      axios.post("/api/post", newPost)
         .then((res) => {
           console.log(res);
         })
@@ -37,11 +34,11 @@ export default function Index({ postList }: any) {
 
   return <>
     <div className="grid gap-5">
-      {postList.map((post: SimplePostType) =>
+      {postList.map((post: any) =>
         <Link
           className="border flex rounded-3xl p-5 justify-between"
-          key={post.id}
-          href={`/${post.id}`}>
+          key={post._id}
+          href={`/${post._id}`}>
 
           <div className="flex flex-col gap-2 max-w-xl max-h-32">
             <span className="font-semibold text-2xl text-gray-700">
@@ -102,8 +99,7 @@ export default function Index({ postList }: any) {
 }
 
 export async function getStaticProps() {
-  const data = getPostList();
-  
+  const data = await getPostList();
   return {
     props: {
       postList: data,
