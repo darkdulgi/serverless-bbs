@@ -18,17 +18,18 @@ export default function Index({ postList }: any) {
       title: data.title,
       content: data.content,
       writer: session?.user?.name,
-      writerImage: session?.user?.image
+      writerImage: session?.user?.image,
+      date: new Date().toLocaleString(),
     }
     if (confirm('이대로 글을 작성하시겠습니까?')) {
       axios.post("/api/post", newPost)
         .then((res) => {
           console.log(res);
+          router.reload();
         })
         .catch((error) => {
           console.log(error);
         });
-      router.reload();
     }
   };
 
