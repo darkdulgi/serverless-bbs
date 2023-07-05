@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react"
 import { getPostList } from "@/pages/api/post";
-import { PostType } from "@/interface/dbtype";
 
 export default function Index({ postList }: any) {
   const { data: session } = useSession();
@@ -23,12 +22,11 @@ export default function Index({ postList }: any) {
     }
     if (confirm('이대로 글을 작성하시겠습니까?')) {
       axios.post("/api/post", newPost)
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           router.reload();
         })
         .catch((error) => {
-          console.log(error);
+          alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message);
         });
     }
   };
@@ -37,22 +35,26 @@ export default function Index({ postList }: any) {
     <div className="grid gap-5">
       {postList.map((post: any) =>
         <Link
-          className="border flex rounded-3xl p-5 justify-between"
+          className="border flex flex-col rounded-3xl p-3 duration-300 hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-100"
           key={post._id}
-          href={`/${post._id}`}>
+          href={`/post/${post._id}`}>
 
-          <div className="flex flex-col gap-2 max-w-xl max-h-32">
-            <span className="font-semibold text-2xl text-gray-700">
+          <div className="flex flex-col gap-2 pb-3 mb-3 border-b border-gray-200 text-gray-700">
+            <span className="font-semibold text-2xl">
               {post.title}
             </span>
 
-            <span className="text-gray-700">
+            <span className="">
               {post.content}
             </span>
           </div>
 
-          <div className="text-gray-700 flex content-end items-end">
-            <span>
+          <div className="text-gray-500 self-end flex items-center">
+            <span className="text-sm mr-2">
+              {post.date}
+            </span>
+            <img className="object-cover h-8 w-8 mr-1 rounded-full border border-white" src={post.writerImage} />
+            <span className="font-semibold">
               {post.writer}
             </span>
           </div>

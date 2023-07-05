@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react"
-import Image from "next/image";
 
 export default function NavBar() {
   const { data: session } = useSession();
@@ -15,7 +14,7 @@ export default function NavBar() {
       <div className="px-5 flex gap-5">
 
         <div className={`flex gap-2 items-center ${session ? "" : "hidden"}`}>
-          <Image src={session?.user?.image as string} className="object-cover h-8 w-8 rounded-full border-2 border-sky-300" alt = "" width={64} height={64}/>
+          <img src={session?.user?.image as string} className="object-cover h-8 w-8 rounded-full border-2 border-sky-300"/>
           <span>{session?.user?.name}</span>
         </div>
 
