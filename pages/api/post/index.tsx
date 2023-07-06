@@ -1,25 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { MongoClient } from 'mongodb';
 import { PostType } from '@/interface/dbtype';
+import dbConnect from '@/helper/db-connect';
 
 export async function getPostList() {
-  const client = await MongoClient.connect(process.env.MONGODB_CONNECT as string);
-  const db = client.db();
+  const { client, db } = await dbConnect();
   const data = await db.collection('post').find().sort({ date: -1 }).toArray();
   client.close();
   return JSON.parse(JSON.stringify(data));
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
-  let client: any;
-  try {
-    client = await MongoClient.connect(process.env.MONGODB_CONNECT as string);
-  } catch (error) {
-    res.status(500).json({ message: "서버 오류" })
-    return;
-  };
-
-  const db = client.db();
+  const { client, db } = await dbConnect();
 
   if (req.method === 'GET') {
     res.status(200).json({
@@ -49,9 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
   }
   else {
-    res.status(405).json({
-      message: "잘못된 요청",
-    })
+    res.status(405).json({ message: "잘못된 요청", })
   }
   client.close();
 }

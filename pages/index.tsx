@@ -5,8 +5,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react"
 import { getPostList } from "@/pages/api/post";
+import { PostType } from "@/interface/dbtype";
 
-export default function Index({ postList }: any) {
+export default function Index({ postList }: { postList: PostType[] }) {
   const { data: session } = useSession();
   const [formVisible, setFormVisible] = useState(false);
   const { register, handleSubmit, formState: { errors }, } = useForm();
@@ -101,7 +102,7 @@ export default function Index({ postList }: any) {
   </>;
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const data = await getPostList();
   return {
     props: {
