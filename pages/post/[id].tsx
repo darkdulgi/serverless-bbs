@@ -1,12 +1,17 @@
-import { PostType } from "@/interface/dbtype";
 import { useRouter } from "next/router";
-import { getPost } from "../api/post/[id]";
 import { useSession } from "next-auth/react";
+import useSWR from 'swr';
+import axios from "axios";
 
-export default function Index({ post }: { post: PostType }) {
+export default function Index() {
   const router = useRouter();
+  const { id } = router.query;
   const { data: session } = useSession();
-  console.log(post);
+  const { data: post, isValidating } = useSWR('/api/post/' + id,
+    id ? (url) => axios.get(url).then((res) => res.data.post) : null);
+    
+  if (!router.isReady || isValidating) return <>로딩 중..</>;
+
   return (
     <>
       <div className="border rounded-2xl p-4 gap-3 flex flex-col">
@@ -34,12 +39,4 @@ export default function Index({ post }: { post: PostType }) {
       </div>
     </>
   );
-}
-
-export async function getServerSideProps({ params }: any) {
-  return {
-    props: {
-      post: await getPost(params.id),
-    }
-  }
 }
