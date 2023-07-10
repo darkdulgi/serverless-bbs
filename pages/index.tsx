@@ -14,21 +14,17 @@ export default function Index({ postList }: { postList: PostType[] }) {
   const router = useRouter();
 
   const onSubmit = (data: any) => {
-    const newPost = {
-      title: data.title,
-      content: data.content,
-      writer: session?.user?.name,
-      writerImage: session?.user?.image,
-      date: new Date().toLocaleString(),
+    const newPost : PostType = {
+      title: data.title.trim(),
+      content: data.content.trim(),
+      writer: session?.user?.name as string,
+      writerImage: session?.user?.image as string,
+      date: new Date().getTime(),
     }
     if (confirm('이대로 글을 작성하시겠습니까?')) {
       axios.post("/api/post", newPost)
-        .then(() => {
-          router.reload();
-        })
-        .catch((error) => {
-          alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message);
-        });
+        .then(() => router.reload())
+        .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message));
     }
   };
 
@@ -52,7 +48,7 @@ export default function Index({ postList }: { postList: PostType[] }) {
 
           <div className="text-gray-500 self-end flex items-center">
             <span className="text-sm mr-2">
-              {post.date}
+              {new Date(post.date).toLocaleString()}
             </span>
             <img className="object-cover h-8 w-8 mr-1 rounded-full border border-white" src={post.writerImage} />
             <span className="font-semibold">

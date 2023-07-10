@@ -20,9 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
   else if (req.method === 'POST') {
     const newPost: PostType = req.body;
-    newPost.title = newPost.title.trim();
-    newPost.content = newPost.content.trim();
-    if (!newPost.title || !newPost.content || !newPost.writer.trim() || !newPost.writerImage.trim() || !newPost.date.trim()) {
+    if (!newPost.title.trim() || !newPost.content.trim() || !newPost.writer.trim() || !newPost.writerImage.trim() || !newPost.date) {
       res.status(400).json({ message: "누락되거나 비어 있는 데이터의 요청" });
     }
     else if (newPost.title.length > 50 || newPost.content.length > 200) {

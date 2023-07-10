@@ -3,7 +3,7 @@ export interface PostType {
   writerImage: string;
   title: string;
   content: string;
-  date: string;
+  date: number;
 }
 
 export interface CommentType {
@@ -11,5 +11,5 @@ export interface CommentType {
   writer: string;
   writerImage: string;
   content: string;
-  date: string;
+  date: number;
 }
