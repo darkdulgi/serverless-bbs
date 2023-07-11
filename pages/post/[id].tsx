@@ -10,10 +10,13 @@ export default function Index() {
   const { id } = router.query;
   const { data: session } = useSession();
   const { register, handleSubmit, formState: { errors }, } = useForm();
-  const { data: post, isValidating } = useSWR('/api/post/' + id,
-    id ? (url) => axios.get(url).then((res) => res.data.post) : null);
 
-  if (!router.isReady || isValidating) return <>로딩 중..</>;
+  const { data: post, isValidating: postIsValidating } = useSWR(id ? '/api/post/' + id : null,
+    id ? (url) => axios.get(url).then((res) => res.data.post) : null);
+  const { data: commentList, isValidating: commentIsValidating } = useSWR(id ? '/api/comment' : null,
+    id ? (url) => axios.get(url, { params: { postId: id } }).then((res) => res.data.commentList) : null);
+
+  if (!router.isReady || postIsValidating || commentIsValidating) return <>로딩 중..</>;
 
   const onSubmit = (data: any) => {
     const newComment: CommentType = {
@@ -27,6 +30,8 @@ export default function Index() {
       .then(() => router.reload())
       .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message))
   };
+
+  console.log(commentList);
 
   return (
     <>
@@ -43,7 +48,7 @@ export default function Index() {
               {post.writer}
             </div>
             <div className="text-gray-600 text-sm">
-            {new Date(post.date).toLocaleString()}
+              {new Date(post.date).toLocaleString()}
             </div>
           </div>
 
@@ -58,6 +63,12 @@ export default function Index() {
         <img className="h-8 w-8" src="/comment.png" />
         <span>댓글</span>
       </div>
+
+      {commentList.map((comment: any) =>
+        <div key={comment._id}>
+          {comment.content}
+        </div>
+      )}
 
       <form className="border">
         <input

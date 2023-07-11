@@ -6,7 +6,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const { client, db } = await dbConnect();
 
   if (req.method === 'GET') {
-
+    try {
+      const data = await db.collection('comment').find(req.query).sort({ date: -1 }).toArray();
+      res.status(200).json({ message: "댓글 로드 완료", commentList: data });
+    } catch (error) {
+      res.status(500).json({ message: "서버 네트워크 오류" })
+    }
   }
   else if (req.method === 'POST') {
     const newComment: CommentType = req.body;
@@ -19,12 +24,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     else {
       try {
         await db.collection('comment').insertOne(newComment);
+        res.status(201).json({ message: "글 작성 완료" });
       } catch (error) {
         res.status(500).json({ message: "서버 네트워크 오류" })
-        client.close();
-        return;
       }
-      res.status(201).json({ message: "글 작성 완료" });
     }
   }
   else {
