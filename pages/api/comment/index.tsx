@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   if (req.method === 'GET') {
     try {
-      const data = await db.collection('comment').find(req.query).sort({ date: -1 }).toArray();
+      const data = await db.collection('comment').find(req.query).sort({ date: 1 }).toArray();
       res.status(200).json({ message: "댓글 로드 완료", commentList: data });
     } catch (error) {
       res.status(500).json({ message: "서버 네트워크 오류" })

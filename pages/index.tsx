@@ -70,16 +70,18 @@ export default function Index({ postList }: { postList: PostType[] }) {
           className="p-2 w-full rounded-xl outline-none bg-slate-100 focus:outline-sky-500 focus:outline-2 focus:bg-white text-gray-700"
           type="text"
           placeholder="제목을 입력하세요."
+          disabled={session ? false : true}
         />
 
         <textarea
           {...register("content", { required: true })}
           className="resize-none w-full h-64 p-2 rounded-xl outline-none bg-slate-100 focus:outline-sky-500 focus:outline-2 focus:bg-white text-gray-700"
           placeholder="내용을 입력하세요."
+          disabled={session ? false : true}
         />
 
         <button
-          className="bg-sky-500 text-white font-semibold p-2 shadow-md rounded-lg hover:bg-emerald-500  focus:bg-emerald-700 focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-50"
+          className="bg-sky-500 text-white font-semibold p-2 shadow-md rounded-lg hover:bg-red-500  focus:bg-red-700 focus:ring-4 focus:ring-red-500 focus:ring-opacity-50"
           onClick={handleSubmit(onSubmit)}>
           제출
         </button>
