@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { CommentType } from '@/interface/dbtype';
 import dbConnect from '@/helper/db-connect';
+import { getServerSession } from "next-auth/next";
+import authOptions from "@/pages/api/auth/[...nextauth]";
 
 export async function getCommentList(params: any) {
   const { client, db } = await dbConnect();
@@ -11,13 +13,17 @@ export async function getCommentList(params: any) {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const { client, db } = await dbConnect();
+  const session: any = await getServerSession(req, res, authOptions);
 
   if (req.method === 'GET') {
     res.status(200).json({ message: "댓글 로드 완료", commentList: await getCommentList(req.query) });
   }
   else if (req.method === 'POST') {
-    const newComment: CommentType = req.body;
-    if (!newComment.postId.trim() || !newComment.content.trim() || !newComment.writer.trim() || !newComment.writerImage.trim() || !newComment.date) {
+    const newComment: CommentType = { ...req.body, writer: session.user.name, writerImage: session.user.image };
+    if(!session){
+      res.status(401).json({ message: "권한 없음" });
+    }
+    else if (!newComment.postId.trim() || !newComment.content.trim() || !newComment.date) {
       res.status(400).json({ message: "누락되거나 비어 있는 데이터의 요청" });
     }
     else if (newComment.content.length > 100) {

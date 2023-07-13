@@ -13,11 +13,9 @@ export default function Index({ post, commentList }: any) {
   const { register, handleSubmit, } = useForm();
 
   const onSubmit = (data: any) => {
-    const newComment: CommentType = {
+    const newComment = {
       postId: id as string,
       content: data.comment.trim(),
-      writer: session?.user?.name as string,
-      writerImage: session?.user?.image as string,
       date: new Date().getTime(),
     };
     if (session) {

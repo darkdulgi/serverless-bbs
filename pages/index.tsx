@@ -14,13 +14,11 @@ export default function Index({ postList }: { postList: PostType[] }) {
   const router = useRouter();
 
   const onSubmit = (data: any) => {
-    const newPost : PostType = {
+    const newPost = {
       title: data.title.trim(),
       content: data.content.trim(),
-      writer: session?.user?.name as string,
-      writerImage: session?.user?.image as string,
       date: new Date().getTime(),
-    }
+    };
     if (confirm('이대로 글을 작성하시겠습니까?')) {
       axios.post("/api/post", newPost)
         .then(() => router.reload())

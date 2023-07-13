@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PostType } from '@/interface/dbtype';
 import dbConnect from '@/helper/db-connect';
+import { getServerSession } from "next-auth/next";
+import authOptions from "@/pages/api/auth/[...nextauth]";
 
 export async function getPostList() {
   const { client, db } = await dbConnect();
@@ -11,6 +13,7 @@ export async function getPostList() {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const { client, db } = await dbConnect();
+  const session: any = await getServerSession(req, res, authOptions);
 
   if (req.method === 'GET') {
     res.status(200).json({
@@ -19,8 +22,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
   }
   else if (req.method === 'POST') {
-    const newPost: PostType = req.body;
-    if (!newPost.title.trim() || !newPost.content.trim() || !newPost.writer.trim() || !newPost.writerImage.trim() || !newPost.date) {
+    const newPost: PostType = { ...req.body, writer: session.user.name, writerImage: session.user.image };
+    if(!session){
+      res.status(401).json({ message: "권한 없음" });
+    }
+    else if (!newPost.title.trim() || !newPost.content.trim() || !newPost.date) {
       res.status(400).json({ message: "누락되거나 비어 있는 데이터의 요청" });
     }
     else if (newPost.title.length > 50 || newPost.content.length > 200) {
@@ -29,12 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     else {
       try {
         await db.collection('post').insertOne(newPost);
+        res.status(201).json({ message: "글 작성 완료" });
       } catch (error) {
         res.status(500).json({ message: "서버 네트워크 오류" })
-        client.close();
-        return;
       }
-      res.status(201).json({ message: "글 작성 완료" });
     }
   }
   else {
