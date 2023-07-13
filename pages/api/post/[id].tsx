@@ -6,7 +6,7 @@ export async function getPost(id: string) {
   const { client, db } = await dbConnect();
   const data = await db.collection('post').findOne(new ObjectId(id as string));
   client.close();
-  return JSON.parse(JSON.stringify(data));;
+  return JSON.parse(JSON.stringify(data));
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {

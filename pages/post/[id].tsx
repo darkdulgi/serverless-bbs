@@ -1,22 +1,16 @@
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import useSWR from 'swr';
 import axios from "axios";
 import { CommentType } from "@/interface/dbtype";
+import { getPost } from '@/pages/api/post/[id]'
+import { getCommentList } from '@/pages/api/comment'
 
-export default function Index() {
+export default function Index({ post, commentList }: any) {
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
   const { register, handleSubmit, } = useForm();
-
-  const { data: post, isValidating: postIsValidating } = useSWR(id ? '/api/post/' + id : null,
-    id ? (url) => axios.get(url).then((res) => res.data.post) : null);
-  const { data: commentList, isValidating: commentIsValidating } = useSWR(id ? '/api/comment/?postId=' + id : null,
-    id ? (url) => axios.get(url).then((res) => res.data.commentList) : null);
-
-  if (!router.isReady || postIsValidating || commentIsValidating) return <>로딩 중..</>;
 
   const onSubmit = (data: any) => {
     const newComment: CommentType = {
@@ -102,4 +96,15 @@ export default function Index() {
       </form>
     </>
   );
+}
+
+export async function getServerSideProps({ params }: any) {
+  const _post = await getPost(params.id);
+  const _commentList = await getCommentList({ postId: params.id });
+  return {
+    props: {
+      post: _post,
+      commentList: _commentList,
+    },
+  }
 }

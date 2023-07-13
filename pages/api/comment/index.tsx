@@ -2,16 +2,18 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { CommentType } from '@/interface/dbtype';
 import dbConnect from '@/helper/db-connect';
 
+export async function getCommentList(params: any) {
+  const { client, db } = await dbConnect();
+  const data = await db.collection('comment').find(params).sort({ date: 1 }).toArray();
+  client.close();
+  return JSON.parse(JSON.stringify(data));
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const { client, db } = await dbConnect();
 
   if (req.method === 'GET') {
-    try {
-      const data = await db.collection('comment').find(req.query).sort({ date: 1 }).toArray();
-      res.status(200).json({ message: "댓글 로드 완료", commentList: data });
-    } catch (error) {
-      res.status(500).json({ message: "서버 네트워크 오류" })
-    }
+    res.status(200).json({ message: "댓글 로드 완료", commentList: await getCommentList(req.query) });
   }
   else if (req.method === 'POST') {
     const newComment: CommentType = req.body;
