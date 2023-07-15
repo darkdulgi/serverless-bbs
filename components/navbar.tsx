@@ -20,7 +20,7 @@ export default function NavBar() {
 
         <button
           className="flex gap-1 items-center"
-          onClick={() => session ? signOut() : signIn("kakao") }>
+          onClick={() => session ? signOut() : signIn("google") }>
           <img src={session ? "/logout.png" : "/login.png"} className="h-8" />
           <span>{session ? "로그아웃" : "로그인"}</span>
         </button>
