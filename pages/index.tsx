@@ -98,12 +98,11 @@ export default function Index({ postList }: { postList: PostType[] }) {
   </>;
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const data = await getPostList();
   return {
     props: {
       postList: data,
     },
-    revalidate: 1,
   }
 }

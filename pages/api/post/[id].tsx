@@ -29,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     else {
       const { client, db } = await dbConnect();
       await db.collection('post').deleteOne({ _id: new ObjectId(id as string) });
+      await db.collection('comment').deleteMany({ postId: id });
       client.close();
       res.status(200).json({ message: "글 삭제 완료" });
     }
