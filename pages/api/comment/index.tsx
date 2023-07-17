@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     res.status(200).json({ message: "댓글 로드 완료", commentList: await getCommentList(req.query) });
   }
   else if (req.method === 'POST') {
-    const newComment: CommentType = { ...req.body, writer: session.user.name, writerImage: session.user.image };
+    const newComment: CommentType = { ...req.body, writer: session?.user?.name, writerImage: session?.user?.image, writerEmail: session?.user?.email };
     if(!session){
       res.status(401).json({ message: "권한 없음" });
     }

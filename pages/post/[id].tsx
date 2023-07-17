@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { CommentType } from "@/interface/dbtype";
 import { getPost } from '@/pages/api/post/[id]'
 import { getCommentList } from '@/pages/api/comment'
 
@@ -29,7 +28,7 @@ export default function Index({ post, commentList }: any) {
   return (
     <>
       <div className="border rounded-2xl p-4 gap-3 flex flex-col">
-        <div className="font-semibold text-4xl">
+        <div className="font-semibold text-3xl">
           {post.title}
         </div>
 
@@ -50,6 +49,27 @@ export default function Index({ post, commentList }: any) {
         <div className="text-lg whitespace-pre-line">
           {post.content}
         </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          className="border border-red-600 bg-white text-red-600 text-sm p-2 rounded-md transition hover:bg-red-500 hover:text-white hover:font-bold active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"
+          onClick={() => {
+            if (session?.user?.email !== post.writerEmail) {
+              alert('로그인하지 않았거나 본인의 게시물이 아닙니다.');
+            }
+            else if (confirm("글을 삭제하시겠습니까?")) {
+              axios.delete('/api/post/' + id)
+                .then(() => {
+                  router.push('/');
+                })
+                .catch((error) => {
+                  alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message)
+                })
+            };
+          }}>
+          글 삭제
+        </button>
       </div>
 
       <div className="flex gap-1 items-center mt-5 text-xl text-gray-600">

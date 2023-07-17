@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
   }
   else if (req.method === 'POST') {
-    const newPost: PostType = { ...req.body, writer: session.user.name, writerImage: session.user.image };
+    const newPost: PostType = { ...req.body, writer: session?.user?.name, writerImage: session?.user?.image, writerEmail: session?.user?.email };
     if(!session){
       res.status(401).json({ message: "권한 없음" });
     }

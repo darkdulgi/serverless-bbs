@@ -79,7 +79,7 @@ export default function Index({ postList }: { postList: PostType[] }) {
         />
 
         <button
-          className="bg-sky-500 text-white font-semibold p-2 shadow-md rounded-lg hover:bg-red-500  focus:bg-red-700 focus:ring-4 focus:ring-red-500 focus:ring-opacity-50"
+          className="bg-sky-500 text-white font-semibold p-2 shadow-md rounded-lg hover:bg-red-500 active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"
           onClick={handleSubmit(onSubmit)}>
           제출
         </button>
