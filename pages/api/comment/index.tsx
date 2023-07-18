@@ -3,6 +3,7 @@ import { CommentType } from '@/interface/dbtype';
 import dbConnect from '@/helper/db-connect';
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/pages/api/auth/[...nextauth]";
+import { ObjectId } from 'mongodb';
 
 export async function getCommentList(params: any) {
   const { client, db } = await dbConnect();
@@ -14,9 +15,15 @@ export async function getCommentList(params: any) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const { client, db } = await dbConnect();
   const session: any = await getServerSession(req, res, authOptions);
+  let params: any = req.query;
+  params._id = new ObjectId(params._id as string);
 
   if (req.method === 'GET') {
-    res.status(200).json({ message: "댓글 로드 완료", commentList: await getCommentList(req.query) });
+    res.status(200).json({ message: "댓글 로드 완료", commentList: await getCommentList(params) });
+  }
+  else if(req.method==='DELETE'){
+    await db.collection('comment').deleteOne(params);
+    res.status(200).json({ message: "댓글 삭제 완료" });
   }
   else if (req.method === 'POST') {
     const newComment: CommentType = { ...req.body, writer: session?.user?.name, writerImage: session?.user?.image, writerEmail: session?.user?.email };

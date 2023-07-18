@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { getPost } from '@/pages/api/post/[id]'
 import { getCommentList } from '@/pages/api/comment'
+import { useState } from "react";
 
 export default function Index({ post, commentList }: any) {
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
   const { register, handleSubmit, } = useForm();
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = (data: any) => {
     const newComment = {
@@ -18,11 +20,46 @@ export default function Index({ post, commentList }: any) {
       date: new Date().getTime(),
     };
     if (session) {
+      setLoading(true);
       axios.post('/api/comment', newComment)
         .then(() => router.reload())
-        .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message));
+        .catch((error) => {
+          alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message);
+          setLoading(false);
+        })
     }
     else alert("로그인이 필요합니다.");
+  };
+
+  const onDelete = () => {
+    if (session?.user?.email !== post.writerEmail) {
+      alert('로그인하지 않았거나 본인의 게시물이 아닙니다.');
+    }
+    else if (confirm("글을 삭제하시겠습니까?")) {
+      setLoading(true);
+      axios.delete('/api/post/' + id)
+        .then(() => router.push('/'))
+        .catch((error) => {
+          alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message);
+          setLoading(false);
+        })
+    }
+  };
+
+  const onCommentDelete = (commentId: string) => {
+    if (confirm("댓글을 삭제하시겠습니까?")) {
+      setLoading(true);
+      axios.delete('/api/comment',{
+        params:{
+          _id: commentId,
+        }
+      })
+        .then(() => router.reload())
+        .catch((error) => {
+          alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message);
+          setLoading(false);
+        })
+    }
   };
 
   return (
@@ -53,22 +90,10 @@ export default function Index({ post, commentList }: any) {
 
       <div className="flex justify-end">
         <button
-          className="border border-red-600 bg-white text-red-600 text-sm p-2 rounded-md transition hover:bg-red-500 hover:text-white hover:font-bold active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"
-          onClick={() => {
-            if (session?.user?.email !== post.writerEmail) {
-              alert('로그인하지 않았거나 본인의 게시물이 아닙니다.');
-            }
-            else if (confirm("글을 삭제하시겠습니까?")) {
-              axios.delete('/api/post/' + id)
-                .then(() => {
-                  router.push('/');
-                })
-                .catch((error) => {
-                  alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message)
-                })
-            };
-          }}>
-          글 삭제
+          className={`border border-red-600 bg-white text-red-600 text-sm p-2 rounded-md transition ${loading ? "bg-red-400 border-none" : "hover:bg-red-500 hover:text-white hover:font-bold active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"}`}
+          onClick={onDelete}
+          disabled={loading}>
+          {loading ? <img src="/loading.svg" className="h-6 animate-spin" /> : "글 삭제"}
         </button>
       </div>
 
@@ -91,9 +116,17 @@ export default function Index({ post, commentList }: any) {
               </span>
             </div>
 
-            <span>
-              {comment.content}
-            </span>
+            <div className="flex justify-between">
+              <span>
+                {comment.content}
+              </span>
+
+              <img
+                src="/trash.svg"
+                className={`h-6 cursor-pointer ${comment.writerEmail !== session?.user?.email ? "hidden" : ""}`}
+                onClick={(e)=>{onCommentDelete(comment._id)}}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -107,9 +140,10 @@ export default function Index({ post, commentList }: any) {
           {...register("comment", { required: true })} />
 
         <button
-          className="rounded-md p-2 w-24 bg-emerald-500 text-white text-sm transition duration-300 hover:bg-red-500 font-semibold"
-          onClick={handleSubmit(onSubmit)}>
-          댓글 작성
+          className={`rounded-md p-2 w-24 bg-emerald-500 text-white text-sm transition duration-300 font-semibold flex justify-center ${loading ? "bg-red-400" : "hover:bg-red-500"}`}
+          onClick={handleSubmit(onSubmit)}
+          disabled={loading}>
+          {loading ? <img src="/loading.svg" className="h-6 animate-spin" /> : "댓글 작성"}
         </button>
       </form>
     </>
