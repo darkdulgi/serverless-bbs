@@ -90,7 +90,7 @@ export default function Index({ post, commentList }: any) {
 
       <div className="flex justify-end">
         <button
-          className={`border border-red-600 bg-white text-red-600 text-sm p-2 rounded-md transition ${loading ? "bg-red-400 border-none" : "hover:bg-red-500 hover:text-white hover:font-bold active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"}`}
+          className={`p-2 rounded-md text-sm ${loading ? "bg-red-400 border-none" : "hover:bg-red-500 hover:text-white hover:font-bold border border-red-600 bg-white text-red-600 transition active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50 "}`}
           onClick={onDelete}
           disabled={loading}>
           {loading ? <img src="/loading.svg" className="h-6 animate-spin" /> : "글 삭제"}
@@ -140,7 +140,7 @@ export default function Index({ post, commentList }: any) {
           {...register("comment", { required: true })} />
 
         <button
-          className={`rounded-md p-2 w-24 bg-emerald-500 text-white text-sm transition duration-300 font-semibold flex justify-center ${loading ? "bg-red-400" : "hover:bg-red-500"}`}
+          className={`rounded-md p-2 w-24 flex justify-center ${loading ? "bg-red-400" : "hover:bg-red-500 bg-emerald-500 text-white text-sm transition duration-300 font-semibold"}`}
           onClick={handleSubmit(onSubmit)}
           disabled={loading}>
           {loading ? <img src="/loading.svg" className="h-6 animate-spin" /> : "댓글 작성"}
