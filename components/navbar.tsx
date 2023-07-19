@@ -11,21 +11,19 @@ export default function NavBar() {
           서버리스 게시판
         </Link>
       </div>
-      
-      <div className="px-5 flex gap-5">
 
-        <div className={`flex gap-2 items-center ${session ? "" : "hidden"}`}>
-          <img src={session?.user?.image as string} className="object-cover h-8 w-8 rounded-full border-2 border-sky-300"/>
+      <div className="px-5 flex gap-5">
+        <Link href='/mypage' className={`flex gap-2 items-center ${session ? "" : "hidden"}`}>
+          <img src={session?.user?.image as string} className="object-cover h-8 w-8 rounded-full border-2 border-sky-300" />
           <span>{session?.user?.name}</span>
-        </div>
+        </Link>
 
         <button
           className="flex gap-1 items-center"
-          onClick={() => session ? signOut() : signIn("google") }>
+          onClick={() => session ? signOut() : signIn("google")}>
           <img src={session ? "/logout.png" : "/login.png"} className="h-8" />
           <span>{session ? "로그아웃" : "로그인"}</span>
         </button>
-
       </div>
     </nav>
   );

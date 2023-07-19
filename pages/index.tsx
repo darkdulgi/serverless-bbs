@@ -10,7 +10,7 @@ import { PostType } from "@/interface/dbtype";
 export default function Index({ postList }: { postList: PostType[] }) {
   const { data: session } = useSession();
   const [formVisible, setFormVisible] = useState(false);
-  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const { register, handleSubmit} = useForm();
   const router = useRouter();
 
   const onSubmit = (data: any) => {
