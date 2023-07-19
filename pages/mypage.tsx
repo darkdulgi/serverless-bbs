@@ -1,10 +1,9 @@
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import RedirectPage from "@/pages/redirectPage";
 
 export default function MyPage() {
   const { data: session } = useSession();
-  if(!session) return redirectPage();
+  if(!session) return <RedirectPage />;
 
   return (
     <div className="flex flex-col gap-3">
@@ -27,10 +26,3 @@ export default function MyPage() {
   );
 }
 
-const redirectPage = () => {
-  const router = useRouter();
-  useEffect(() => {
-    router.push('/');
-  }, []);
-  return <></>;
-}
