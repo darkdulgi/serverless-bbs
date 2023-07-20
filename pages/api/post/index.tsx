@@ -3,10 +3,11 @@ import { PostType } from '@/interface/dbtype';
 import dbConnect from '@/helper/db-connect';
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/pages/api/auth/[...nextauth]";
+import { ObjectId } from 'mongodb';
 
-export async function getPostList() {
+export async function getPostList(params: any) {
   const { client, db } = await dbConnect();
-  const data = await db.collection('post').find().sort({ date: -1 }).toArray();
+  const data = await db.collection('post').find(params).sort({ date: -1 }).toArray();
   client.close();
   return JSON.parse(JSON.stringify(data));
 }
@@ -14,16 +15,18 @@ export async function getPostList() {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const { client, db } = await dbConnect();
   const session: any = await getServerSession(req, res, authOptions);
+  let params: any = req.query;
+  if (params._id) params._id = new ObjectId(params._id as string);
 
   if (req.method === 'GET') {
     res.status(200).json({
       message: "글 목록 조회 완료",
-      postList: await getPostList(),
+      postList: await getPostList(params),
     });
   }
   else if (req.method === 'POST') {
     const newPost: PostType = { ...req.body, writer: session?.user?.name, writerImage: session?.user?.image, writerEmail: session?.user?.email };
-    if(!session){
+    if (!session) {
       res.status(401).json({ message: "권한 없음" });
     }
     else if (!newPost.title.trim() || !newPost.content.trim() || !newPost.date) {
