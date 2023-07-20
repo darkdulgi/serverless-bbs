@@ -4,20 +4,22 @@ import axios from "axios";
 import authOptions from "./api/auth/[...nextauth]"
 import { getServerSession } from "next-auth";
 import Link from "next/link";
-import { PostType } from "@/interface/dbtype";
 
 export default function MyPage({ session }: any) {
   const [postList, setPostList] = useState([]);
   const [commentList, setCommentList] = useState([]);
-  if (!session) return <RedirectPage />;
   useEffect(() => {
-    axios.get('/api/post', { params: { writerEmail: session?.user?.email } })
-      .then((res) => setPostList(res.data.postList))
-      .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message));
-    axios.get('/api/comment', { params: { writerEmail: session?.user?.email } })
-      .then((res) => setCommentList(res.data.commentList))
-      .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message));
+    if (session) {
+      axios.get('/api/post', { params: { writerEmail: session?.user?.email } })
+        .then((res) => setPostList(res.data.postList))
+        .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message));
+      axios.get('/api/comment', { params: { writerEmail: session?.user?.email } })
+        .then((res) => setCommentList(res.data.commentList))
+        .catch((error) => alert('코드 에러 ' + error.response.status + ': ' + error.response.data.message));
+    }
   }, [session]);
+
+  if (!session) return <RedirectPage />;
 
   return (
     <div className="flex flex-col gap-3">
