@@ -39,21 +39,51 @@ export default function MyPage({ session }: any) {
         </div>
       </div>
 
-      <div className="flex gap-3">
-        <div className="border flex flex-col">
-          {postList.map((post: any) =>
-            <Link key={post._id} href='/'>
-              {post.title}
-            </Link>
-          )}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <p className="font-bold mb-2 text-lg">
+            나의 글
+          </p>
+
+          <div className="border grid px-2 rounded-lg divide-y">
+            {postList.map((post: any) =>
+              <Link
+                key={post._id}
+                href={'/post/' + post._id}
+                className="flex justify-between py-1">
+                <span>
+                  {post.title}
+                </span>
+
+                <span className="text-xs text-gray-500 min-w-fit">
+                  {new Date(post.date).toLocaleDateString()}
+                </span>
+              </Link>
+            )}
+          </div>
         </div>
 
-        <div className="border flex flex-col">
-          {commentList.map((comment: any) =>
-            <Link key={comment._id} href='/'>
-              {comment.content}
-            </Link>
-          )}
+        <div>
+          <p className="font-bold mb-2 text-lg">
+            나의 댓글
+          </p>
+
+          <div className="border grid px-2 rounded-lg divide-y">
+            {commentList.map((comment: any) =>
+              <Link
+                key={comment._id}
+                href={'/post/' + comment.postId}
+                className="flex justify-between py-1">
+                <span>
+                  {comment.content}
+                </span>
+
+                <span className="text-xs text-gray-500 min-w-fit">
+                  {new Date(comment.date).toLocaleDateString()}
+                </span>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>

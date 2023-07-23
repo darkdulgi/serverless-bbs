@@ -93,7 +93,7 @@ export default function Index({ post, commentList }: any) {
           className={`p-2 rounded-md text-sm ${loading ? "bg-red-400 border-none" : "hover:bg-red-500 hover:text-white hover:font-bold border border-red-600 bg-white text-red-600 transition active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50 "}`}
           onClick={onDelete}
           disabled={loading}>
-          {loading ? <img src="/loading.svg" className="h-6 animate-spin" /> : "글 삭제"}
+          {loading ? <img src="/loading.svg" className="h-5 animate-spin" /> : "글 삭제"}
         </button>
       </div>
 
@@ -143,7 +143,7 @@ export default function Index({ post, commentList }: any) {
           className={`rounded-md p-2 w-24 flex justify-center ${loading ? "bg-red-400" : "hover:bg-red-500 bg-emerald-500 text-white text-sm transition duration-300 font-semibold"}`}
           onClick={handleSubmit(onSubmit)}
           disabled={loading}>
-          {loading ? <img src="/loading.svg" className="h-6 animate-spin" /> : "댓글 작성"}
+          {loading ? <img src="/loading.svg" className="h-5 animate-spin" /> : "댓글 작성"}
         </button>
       </form>
     </>
