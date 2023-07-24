@@ -42,7 +42,7 @@ export default function MyPage({ session }: any) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <p className="font-bold mb-2 text-lg">
-            나의 글
+            나의 글 ({postList.length})
           </p>
 
           <div className="border grid px-2 rounded-lg divide-y">
@@ -50,7 +50,7 @@ export default function MyPage({ session }: any) {
               <Link
                 key={post._id}
                 href={'/post/' + post._id}
-                className="flex justify-between py-1">
+                className="flex justify-between py-1 items-center">
                 <span>
                   {post.title}
                 </span>
@@ -65,7 +65,7 @@ export default function MyPage({ session }: any) {
 
         <div>
           <p className="font-bold mb-2 text-lg">
-            나의 댓글
+            나의 댓글 ({commentList.length})
           </p>
 
           <div className="border grid px-2 rounded-lg divide-y">
@@ -73,7 +73,7 @@ export default function MyPage({ session }: any) {
               <Link
                 key={comment._id}
                 href={'/post/' + comment.postId}
-                className="flex justify-between py-1">
+                className="flex justify-between py-1 items-center">
                 <span>
                   {comment.content}
                 </span>
