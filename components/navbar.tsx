@@ -5,17 +5,17 @@ export default function NavBar() {
   const { data: session } = useSession();
 
   return (
-    <nav className="bg-center shadow-md shadow-indigo-200 h-20 text-white flex justify-between items-center font-bold" style={{backgroundImage:"url('/city.jpg')",}}>
-      <div className="px-5 text-xl md:text-2xl">
+    <nav className="bg-center shadow-md shadow-indigo-200 h-40 text-white flex justify-between items-center font-bold" style={{backgroundImage:"url('/city.jpg')",}}>
+      <span className="px-5 text-xl md:text-3xl">
         <Link href='/'>
-          서버리스 게시판
+          Next.js를 활용한 서버리스 게시판
         </Link>
-      </div>
+      </span>
 
       <div className="px-5 flex gap-5">
         <Link href='/mypage' className={`flex gap-2 items-center ${session ? "" : "hidden"}`}>
           <img src={session?.user?.image as string} className="object-cover h-8 w-8 rounded-full border-2 border-sky-300" />
-          <span>{session?.user?.name}</span>
+          <span className="hidden md:inline">{session?.user?.name}</span>
         </Link>
 
         <button

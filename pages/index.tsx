@@ -10,7 +10,7 @@ import { PostType } from "@/interface/dbtype";
 export default function Index({ postList }: { postList: PostType[] }) {
   const { data: session } = useSession();
   const [formVisible, setFormVisible] = useState(false);
-  const { register, handleSubmit} = useForm();
+  const { register, handleSubmit, watch } = useForm();
   const router = useRouter();
 
   const onSubmit = (data: any) => {
@@ -26,11 +26,13 @@ export default function Index({ postList }: { postList: PostType[] }) {
     }
   };
 
+  const watchContent = watch("content") ? watch("content") : '';
+
   return <>
     <div className="grid gap-5">
       {postList.map((post: any) =>
         <Link
-          className="border flex flex-col rounded-3xl p-3 duration-300 hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-100"
+          className="border border-gray-300 flex flex-col p-3 duration-300 hover:border-rose-800 hover:shadow-lg hover:shadow-rose-200"
           key={post._id}
           href={`/post/${post._id}`}>
 
@@ -58,7 +60,7 @@ export default function Index({ postList }: { postList: PostType[] }) {
     </div>
 
     <div className="absolute bottom-8 right-0 px-8 flex flex-col gap-5 items-end w-full max-w-xl">
-      <form className={`${formVisible ? "" : "invisible"} bg-white w-full flex flex-col gap-3 items-end border border-sky-300 rounded-3xl p-5 shadow-lg shadow-sky-200`}>
+      <form className={`${formVisible ? "" : "invisible"} bg-white w-full flex flex-col gap-3 items-end border border-gray-300 rounded-2xl p-5 shadow-lg shadow-gray-200`}>
         <span className="self-start text-xl font-bold text-sky-700">
           글 작성하기
         </span>
@@ -78,11 +80,17 @@ export default function Index({ postList }: { postList: PostType[] }) {
           disabled={session ? false : true}
         />
 
-        <button
-          className="bg-sky-500 text-white font-semibold p-2 shadow-md rounded-lg hover:bg-red-500 active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"
-          onClick={handleSubmit(onSubmit)}>
-          제출
-        </button>
+        <div className="w-full flex justify-between items-center">
+          <span className={`tracking-wide ${watchContent.length <= 200 ?" text-gray-500" : "text-red-600"}`}>
+            {watchContent.length}/200
+          </span>
+          
+          <button
+            className="bg-sky-500 text-white font-semibold p-2 shadow-md rounded-lg hover:bg-red-500 active:bg-red-700 active:ring-4 active:ring-red-500 active:ring-opacity-50"
+            onClick={handleSubmit(onSubmit)}>
+            제출
+          </button>
+        </div>
       </form>
 
       <img
